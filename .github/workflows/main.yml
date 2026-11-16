@@ -22,8 +22,34 @@ jobs:
 
       - name: Fix JVM target compatibility
         run: |
-          sed -i 's/JavaVersion.VERSION_1_8/JavaVersion.VERSION_17/g' app/build.gradle.kts
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("app/build.gradle.kts")
+          s = p.read_text()
+
+          config = """
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+
+              kotlinOptions {
+                  jvmTarget = "17"
+              }
+
+          """
+
+          s = s.replace(
+              "    defaultConfig {",
+              config + "    defaultConfig {",
+              1
+          )
+
+          p.write_text(s)
+          PY
         working-directory: project/JalaliToday
+
 
       - name: Setup Java
         uses: actions/setup-java@v4
