@@ -20,6 +20,11 @@ jobs:
           mkdir project
           unzip JalaliToday-Android-Project.zip -d project
 
+      - name: Fix JVM target compatibility
+        run: |
+          sed -i 's/JavaVersion.VERSION_1_8/JavaVersion.VERSION_17/g' app/build.gradle.kts
+        working-directory: project/JalaliToday
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
